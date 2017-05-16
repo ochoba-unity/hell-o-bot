@@ -3,7 +3,7 @@
 #
 #  bot.py
 #
-#  Copyright 2017 user <user@pc>
+#  Copyright 2017 user
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -49,12 +49,7 @@ def check_updates():
     if not request.status_code == 200: return False # Проверка ответа сервера
     if not request.json()['ok']: return False # Проверка успешности обращения к API
     for update in request.json()['result']: # Проверка каждого элемента списка
-        if debug:
-            print('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv')
-            print('Iteration start:')
-            print('UPDATE:\n%s' % update)
         offset = update['update_id'] # Извлечение ID сообщения
-        #print('Offset OK')
         # Ниже, если в обновлении отсутствует блок 'message'
         # или же в блоке 'message' отсутствует блок 'text', тогда
         if not 'message' in update or not 'text' in update['message']:
@@ -73,9 +68,6 @@ def check_updates():
         message = update['message']['text'] # Извлечение текста сообщения
         parameters = (offset, name, from_id, message)
         print('Message (id%s) from %s (id%s): "%s"' % parameters) # Вывод в лог ID и текста сообщения
-        if debug:
-            print('Iteration End.')
-            print('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n')
         # В зависимости от сообщения, выполняем необходимое действие
         run_command(*parameters)
 
@@ -93,11 +85,6 @@ def run_command(offset, name, from_id, cmd):
     elif cmd.startswith('/ping '):
         host=cmd[5:len(cmd)].strip()
         print('ping >'+host+'<')
-        send_text(from_id, '@'+name+', %s' % ping(host)) # Отправка ответа
-
-    elif cmd.startswith('/knock '):
-        host=cmd[6:len(cmd)].strip()
-        print('knock >'+host+'< @')
         send_text(from_id, '@'+name+', %s' % ping(host)) # Отправка ответа
 
     #else:
