@@ -6,19 +6,21 @@ import os
 import telebot
 from config import *
 
-URL = 'https://api.telegram.org/bot'  # URL на который отправляется запрос
+# URL = 'https://api.telegram.org/bot'  # URL на который отправляется запрос
 bot = telebot.TeleBot(token)
+
+
 # data = {'offset': offset + 1, 'limit': 0, 'timeout': 0}
-debug = 0
+# debug = 0
 
 
 @bot.message_handler(commands=['ping'])
 def ping(hostname):
-    response = os.system("ping -c 1 " + hostname.text[5:])
+    response = os.system("ping -c 1 " + hostname.text[6:])
     if response == 0:
-        return hostname.text[5:] + " is up"
+        bot.send_message(hostname.chat.id, hostname.text[6:] + " is up")
     else:
-        return hostname.text[5:] + " is down"
+        bot.send_message(hostname.chat.id, hostname.text[6:] + " is down")
 
 
 @bot.message_handler(commands=['w'])
@@ -35,9 +37,9 @@ def get_weather(message):
             p.feed(w)
             p.close()
             result = p.data
-        return result
+        bot.send_message(message.chat.id, result)
     else:
-        return 'Weather not found!'
+        bot.send_message(message.chat.id, 'Weather not found!')
 
 
 class MyHTMLParser(HTMLParser):
@@ -49,7 +51,7 @@ class MyHTMLParser(HTMLParser):
         self.data = ''
 
     def handle_data(self, data):
-        print("Encountered some data  :", data)
+        # print("Encountered some data  :", data)
         self.data += data + ' '
 
 
