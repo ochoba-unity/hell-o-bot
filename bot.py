@@ -1,17 +1,19 @@
-import time
-import urllib.request
+# import time
+# import urllib.request
 import requests
 from html.parser import HTMLParser
 import os
 import telebot
 from config import *
 
-# URL = 'https://api.telegram.org/bot'  # URL на который отправляется запрос
 bot = telebot.TeleBot(token)
 
 
-# data = {'offset': offset + 1, 'limit': 0, 'timeout': 0}
-# debug = 0
+# Проблемы с доступом в joy-casino.com ?
+
+@bot.message_handler(content_types=['new_chat_member'])
+def say_hello(message):
+    bot.send_message(message.chat.id, chat_rules)  # chat_rules from config
 
 
 @bot.message_handler(commands=['ping'])
