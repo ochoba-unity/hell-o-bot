@@ -1,9 +1,9 @@
-# import time
-# import urllib.request
 import requests
 from html.parser import HTMLParser
 import os
 import telebot
+import time
+
 from config import *
 
 bot = telebot.TeleBot(token)
@@ -14,6 +14,9 @@ bot = telebot.TeleBot(token)
 @bot.message_handler(content_types=['new_chat_member'])
 def say_hello(message):
     bot.send_message(message.chat.id, chat_rules)  # chat_rules from config
+    image = open("faq_image.jpg", "rb")
+    time.sleep(10)
+    bot.send_photo(message.chat.id, image)
 
 
 @bot.message_handler(commands=['ping'])
@@ -45,15 +48,11 @@ def get_weather(message):
 
 
 class MyHTMLParser(HTMLParser):
-    # def __init__(self):
-
     def reset(self):
         HTMLParser.reset(self)
-        # HTMLParser.__init__(self)
         self.data = ''
 
     def handle_data(self, data):
-        # print("Encountered some data  :", data)
         self.data += data + ' '
 
 
