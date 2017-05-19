@@ -19,12 +19,6 @@ def say_hello(message):
     bot.send_photo(message.chat.id, image)
 
 
-@bot.message_handler(func=lambda message: message.reply_to_message.from_user.username == bot_username)
-def reply(message):
-    print("here")
-    bot.reply_to(message.chat.id, "Нет, ты")
-
-
 @bot.message_handler(commands=['ping'])
 def ping(hostname):
     bot.send_message(hostname.chat.id, hostname.text[6:])
@@ -54,6 +48,11 @@ def get_weather(message):
         bot.send_message(message.chat.id, 'Weather not found!')
 
 
+@bot.message_handler(func=lambda message: message.reply_to_message.from_user.username == bot_username[1:])
+def reply(message):
+    bot.reply_to(message, "Нет, ты")
+
+
 class MyHTMLParser(HTMLParser):
     def reset(self):
         HTMLParser.reset(self)
@@ -74,4 +73,9 @@ if __name__ == '__main__':
     try:
         bot.polling(none_stop=True)
     except:
+        print('\n \n')
+        print("**************************************************************************************")
+        print("Connection lost or any other mistake while bot polling, waiting 6 minutes and continue")
+        print("**************************************************************************************")
+        print('')
         time.sleep(360)

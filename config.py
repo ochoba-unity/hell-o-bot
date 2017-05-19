@@ -9,4 +9,5 @@ chat_rules = "Привет, роднуля, ты думаешь я тут от �
              "7. Тыкай сюды /pidoreg \n" \
              "Добро пожаловать, Юлия Александровна."
 
-bot_username = '@jjjfg_bot'
+bot_username = '@jjjfg_bot'  # remember that username has @ symbol
+
