@@ -19,8 +19,15 @@ def say_hello(message):
     bot.send_photo(message.chat.id, image)
 
 
+@bot.message_handler(func=lambda message: message.reply_to_message.from_user.username == bot_username)
+def reply(message):
+    print("here")
+    bot.reply_to(message.chat.id, "Нет, ты")
+
+
 @bot.message_handler(commands=['ping'])
 def ping(hostname):
+    bot.send_message(hostname.chat.id, hostname.text[6:])
     response = os.system("ping -c 1 " + hostname.text[6:])
     if response == 0:
         bot.send_message(hostname.chat.id, hostname.text[6:] + " is up")
@@ -64,4 +71,7 @@ def get_page(url):
 
 
 if __name__ == '__main__':
-    bot.polling(none_stop=True)
+    try:
+        bot.polling(none_stop=True)
+    except:
+        time.sleep(360)
