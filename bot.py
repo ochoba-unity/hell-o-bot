@@ -21,8 +21,7 @@ def say_hello(message):
 
 @bot.message_handler(commands=['ping'])
 def ping(hostname):
-    bot.send_message(hostname.chat.id, hostname.text[6:])
-    response = os.system("ping -t " + hostname.text[6:])
+    response = os.system("ping -n 1 " + hostname.text[6:])
     if response == 0:
         bot.send_message(hostname.chat.id, hostname.text[6:] + " is up")
     else:
