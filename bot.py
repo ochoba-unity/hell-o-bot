@@ -22,7 +22,7 @@ def say_hello(message):
 @bot.message_handler(commands=['ping'])
 def ping(hostname):
     bot.send_message(hostname.chat.id, hostname.text[6:])
-    response = os.system("ping -c 1 " + hostname.text[6:])
+    response = os.system("ping -t " + hostname.text[6:])
     if response == 0:
         bot.send_message(hostname.chat.id, hostname.text[6:] + " is up")
     else:
@@ -72,10 +72,11 @@ def get_page(url):
 if __name__ == '__main__':
     try:
         bot.polling(none_stop=True)
-    except:
+    except Exception as e:
+
         print('\n \n')
         print("**************************************************************************************")
-        print("Connection lost or any other mistake while bot polling, waiting 6 minutes and continue")
+        print("Connection lost or any other error while bot polling, waiting 6 minutes and continue")
         print("**************************************************************************************")
         print('')
         time.sleep(360)
