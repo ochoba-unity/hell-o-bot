@@ -127,12 +127,12 @@ def refresh_names(new_usernames):
 
 
 if __name__ == '__main__':
-    #    try:
-    bot.polling(none_stop=True)
-# except:
-#        print('\n \n')
-#        print("**************************************************************************************")
-#        print("Connection lost or any other error while bot polling, waiting 6 minutes and continue")
-#        print("**************************************************************************************")
-#        print('')
-#        time.sleep(360)
+    try:
+        bot.polling(none_stop=True)
+    except:
+        print('\n \n')
+        print("**************************************************************************************")
+        print("Connection lost or any other error while bot polling, waiting 6 minutes and continue")
+        print("**************************************************************************************")
+        print('')
+        time.sleep(360)
