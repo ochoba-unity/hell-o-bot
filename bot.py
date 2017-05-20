@@ -7,11 +7,34 @@ from config import *
 
 bot = telebot.TeleBot(token)
 
+
 # Проблемы с доступом в joy-casino.com ?
 
 @bot.message_handler(commands=['start'])
 def start(message):
     bot.send_message(message.chat.id, "Привет, мальчики")
+
+
+@bot.message_handler(commands=['add_me'])
+def new_member(message):
+    all_names = get_all_names()
+    for i in all_names:
+        print(i)
+        if i == message.from_user.username:
+            bot.send_message(message.chat.id, "Ты уже есть в списке")
+            return
+    all_names += message.from_user.username
+    refresh_names(all_names)
+    bot.send_message(message.chat.id, "Добавлен, теперь буду тебя пинговать")
+
+
+@bot.message_handler(commands=['get_OCHOBA'])
+def get_all(request):
+    usernames = get_all_names()
+    message = ""
+    for name in usernames:
+        message += "@" + name + " "
+    bot.send_message(request.chat.id, message)
 
 
 @bot.message_handler(content_types=['new_chat_member'])
@@ -20,6 +43,19 @@ def say_hello(message):
     image = open("faq_image.jpg", "rb")
     time.sleep(10)
     bot.send_photo(message.chat.id, image)
+
+
+@bot.message_handler(content_types=['left_chat_member'])
+def delete(message):
+    left_username = message.from_user.username
+    all_names = get_all_names()
+    for name in all_names:
+        if name == left_username:
+            name = None
+            bot.send_message(message.chat.id, "Из пингов удалил")
+            return
+
+    bot.send_message(message.chat.id, "Его не было в листе пингов или что-то пошло не так")
 
 
 @bot.message_handler(commands=['ping'])
@@ -50,12 +86,12 @@ def get_weather(message):
         bot.send_message(message.chat.id, 'Weather not found!')
 
 
-@bot.message_handler(func=lambda message: check(message))
+@bot.message_handler(func=lambda message: check_if_reply(message))
 def reply(message):
     bot.reply_to(message, "Нет, ты")
 
 
-def check(message):
+def check_if_reply(message):
     # checks if something was said to bot
     if message.reply_to_message:
         if message.reply_to_message.from_user.username == bot_username:
@@ -79,13 +115,24 @@ def get_page(url):
     return page
 
 
+def get_all_names():
+    take = open("usernames.txt", "r")
+    all_names = [s.strip('\n') for s in take]
+    return all_names
+
+
+def refresh_names(new_usernames):
+    give = open("usernames.txt", "w")
+    print("\n".join(new_usernames), file=give)
+
+
 if __name__ == '__main__':
-    try:
-        bot.polling(none_stop=True)
-    except:
-        print('\n \n')
-        print("**************************************************************************************")
-        print("Connection lost or any other error while bot polling, waiting 6 minutes and continue")
-        print("**************************************************************************************")
-        print('')
-        time.sleep(360)
+    #    try:
+    bot.polling(none_stop=True)
+# except:
+#        print('\n \n')
+#        print("**************************************************************************************")
+#        print("Connection lost or any other error while bot polling, waiting 6 minutes and continue")
+#        print("**************************************************************************************")
+#        print('')
+#        time.sleep(360)
