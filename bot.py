@@ -3,13 +3,16 @@ from html.parser import HTMLParser
 import os
 import telebot
 import time
-
 from config import *
 
 bot = telebot.TeleBot(token)
 
-
 # Проблемы с доступом в joy-casino.com ?
+
+@bot.message_handler(commands=['start'])
+def start(message):
+    bot.send_message(message.chat.id, "Привет, мальчики")
+
 
 @bot.message_handler(content_types=['new_chat_member'])
 def say_hello(message):
@@ -47,9 +50,17 @@ def get_weather(message):
         bot.send_message(message.chat.id, 'Weather not found!')
 
 
-@bot.message_handler(func=lambda message: message.reply_to_message.from_user.username == bot_username[1:])
+@bot.message_handler(func=lambda message: check(message))
 def reply(message):
     bot.reply_to(message, "Нет, ты")
+
+
+def check(message):
+    # checks if something was said to bot
+    if message.reply_to_message:
+        if message.reply_to_message.from_user.username == bot_username:
+            return True
+    return False
 
 
 class MyHTMLParser(HTMLParser):
@@ -71,8 +82,7 @@ def get_page(url):
 if __name__ == '__main__':
     try:
         bot.polling(none_stop=True)
-    except Exception as e:
-
+    except:
         print('\n \n')
         print("**************************************************************************************")
         print("Connection lost or any other error while bot polling, waiting 6 minutes and continue")
