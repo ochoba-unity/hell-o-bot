@@ -51,7 +51,7 @@ def delete(message):
     all_names = get_all_names()
     for name in all_names:
         if name == left_username:
-            name = None
+            all_names.remove(name)
             bot.send_message(message.chat.id, "Из пингов удалил")
             return
 
