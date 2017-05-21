@@ -23,7 +23,7 @@ def new_member(message):
         if i == message.from_user.username:
             bot.send_message(message.chat.id, "Ты уже есть в списке")
             return
-    all_names += message.from_user.username
+    all_names.append(message.from_user.username)
     refresh_names(all_names)
     bot.send_message(message.chat.id, "Добавлен, теперь буду тебя пинговать")
 
@@ -94,7 +94,7 @@ def reply(message):
 def check_if_reply(message):
     # checks if something was said to bot
     if message.reply_to_message:
-        if message.reply_to_message.from_user.username == bot_username:
+        if message.reply_to_message.from_user.username == bot_username[1:]:
             return True
     return False
 
