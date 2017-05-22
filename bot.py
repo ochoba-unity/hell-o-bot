@@ -1,3 +1,5 @@
+from random import randrange
+
 import requests
 from html.parser import HTMLParser
 import os
@@ -8,7 +10,7 @@ from config import *
 bot = telebot.TeleBot(token)
 
 
-# Проблемы с доступом в joy-casino.com ?
+# Here could be your ads
 
 @bot.message_handler(commands=['start'])
 def start(message):
@@ -70,7 +72,7 @@ def delete(message):
 @bot.message_handler(commands=['ping'])
 def ping(hostname):
     print("Chat name = " + hostname.chat.title)
-    print("Chat id = " + hostname.chat.id)
+    print("Chat id = " + str(hostname.chat.id))
 
     response = os.system("ping -n 1 " + hostname.text[6:])
     if response == 0:
@@ -120,6 +122,15 @@ class MyHTMLParser(HTMLParser):
         self.data += data + ' '
 
 
+class Stat:
+    name = ""
+    record = 0
+
+    def __init__(self, name, record):
+        self.name = name
+        self.record = record
+
+
 def get_page(url):
     r = requests.get(url)
     if r.status_code == 200:
@@ -139,12 +150,12 @@ def refresh_names(new_usernames):
 
 
 if __name__ == '__main__':
-    try:
-        bot.polling(none_stop=True)
-    except:
-        print('\n \n')
-        print("**************************************************************************************")
-        print("Connection lost or any other error while bot polling, waiting 6 minutes and continue")
-        print("**************************************************************************************")
-        print('')
-        time.sleep(360)
+    #    try:
+    bot.polling(none_stop=True)
+# except:
+#        print('\n \n')
+#        print("**************************************************************************************")
+#        print("Connection lost or any other error while bot polling, waiting 6 minutes and continue")
+#        print("**************************************************************************************")
+#        print('')
+#        time.sleep(360)
