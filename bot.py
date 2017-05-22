@@ -17,6 +17,8 @@ def start(message):
 
 @bot.message_handler(commands=['add_me'])
 def new_member(message):
+    if message.chat.id != main_chat_id:
+        return
     all_names = get_all_names()
     for i in all_names:
         print(i)
@@ -30,6 +32,8 @@ def new_member(message):
 
 @bot.message_handler(commands=['get_OCHOBA'])
 def get_all(request):
+    if request.chat.id != main_chat_id:
+        return
     usernames = get_all_names()
     message = ""
     for name in usernames:
@@ -39,6 +43,8 @@ def get_all(request):
 
 @bot.message_handler(content_types=['new_chat_member'])
 def say_hello(message):
+    if message.chat.id != main_chat_id:
+        return
     bot.send_message(message.chat.id, chat_rules)  # chat_rules from config
     image = open("faq_image.jpg", "rb")
     time.sleep(10)
@@ -47,6 +53,8 @@ def say_hello(message):
 
 @bot.message_handler(content_types=['left_chat_member'])
 def delete(message):
+    if message.chat.id != main_chat_id:
+        return
     left_username = message.from_user.username
     all_names = get_all_names()
     for name in all_names:
@@ -61,6 +69,9 @@ def delete(message):
 
 @bot.message_handler(commands=['ping'])
 def ping(hostname):
+    print("Chat name = " + hostname.chat.title)
+    print("Chat id = " + hostname.chat.id)
+
     response = os.system("ping -n 1 " + hostname.text[6:])
     if response == 0:
         bot.send_message(hostname.chat.id, hostname.text[6:] + " is up")
