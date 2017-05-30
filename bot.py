@@ -1,3 +1,4 @@
+import subprocess
 from random import randrange
 
 import requests
@@ -69,16 +70,17 @@ def delete(message):
     bot.send_message(message.chat.id, "Его не было в листе пингов или что-то пошло не так")
 
 
-@bot.message_handler(commands=['ping'])
+@bot.message_handler(regexp=r'^/ping .+')
 def ping(hostname):
-    print("Chat name = " + hostname.chat.title)
-    print("Chat id = " + str(hostname.chat.id))
+    print("Chat name = ", hostname.chat.title)
+    print("Chat id = ", hostname.chat.id)
 
-    response = os.system("ping -n 1 " + hostname.text[6:])
+    host = hostname.text[6:]  # skip "/ping "
+    response = subprocess.call(["ping", "-c", "1", host])
     if response == 0:
-        bot.send_message(hostname.chat.id, hostname.text[6:] + " is up")
+        bot.send_message(hostname.chat.id, host + " is up")
     else:
-        bot.send_message(hostname.chat.id, hostname.text[6:] + " is down")
+        bot.send_message(hostname.chat.id, host + " is down")
 
 
 @bot.message_handler(commands=['w'])
