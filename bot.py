@@ -4,6 +4,7 @@ import os
 import telebot
 import time
 from config import *
+from utils import ignore_exceptions
 
 bot = telebot.TeleBot(token)
 
@@ -11,11 +12,13 @@ bot = telebot.TeleBot(token)
 # Проблемы с доступом в joy-casino.com ?
 
 @bot.message_handler(commands=['start'])
+@ignore_exceptions(bot)
 def start(message):
     bot.send_message(message.chat.id, "Привет, мальчики")
 
 
 @bot.message_handler(commands=['add_me'])
+@ignore_exceptions(bot)
 def new_member(message):
     all_names = get_all_names()
     for i in all_names:
@@ -29,6 +32,7 @@ def new_member(message):
 
 
 @bot.message_handler(commands=['get_OCHOBA'])
+@ignore_exceptions(bot)
 def get_all(request):
     usernames = get_all_names()
     message = ""
@@ -38,6 +42,7 @@ def get_all(request):
 
 
 @bot.message_handler(content_types=['new_chat_member'])
+@ignore_exceptions(bot)
 def say_hello(message):
     bot.send_message(message.chat.id, chat_rules)  # chat_rules from config
     image = open("faq_image.jpg", "rb")
@@ -46,6 +51,7 @@ def say_hello(message):
 
 
 @bot.message_handler(content_types=['left_chat_member'])
+@ignore_exceptions(bot)
 def delete(message):
     left_username = message.from_user.username
     all_names = get_all_names()
@@ -60,6 +66,7 @@ def delete(message):
 
 
 @bot.message_handler(commands=['ping'])
+@ignore_exceptions(bot)
 def ping(hostname):
     response = os.system("ping -n 1 " + hostname.text[6:])
     if response == 0:
@@ -69,6 +76,7 @@ def ping(hostname):
 
 
 @bot.message_handler(commands=['w'])
+@ignore_exceptions(bot)
 def get_weather(message):
     result = ''
     w = get_page("http://www.tatarmeteo.ru/")
@@ -88,6 +96,7 @@ def get_weather(message):
 
 
 @bot.message_handler(func=lambda message: check_if_reply(message))
+@ignore_exceptions(bot)
 def reply(message):
     bot.reply_to(message, "Нет, ты")
 
