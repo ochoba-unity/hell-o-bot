@@ -11,6 +11,7 @@ chat_rules = "Привет, роднуля, ты думаешь я тут от �
 
 bot_username = '@jjjfg_bot'  # remember that username has @ symbol
 
+main_chat_id = -235322245
 
 # Фразы выдаваемые ботом при поиске пидоров
 search_for_pidor_replies = (
