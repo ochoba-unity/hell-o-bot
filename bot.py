@@ -6,6 +6,7 @@ import os
 import telebot
 import time
 from config import *
+from utils import ignore_exceptions
 
 bot = telebot.TeleBot(token)
 
@@ -13,11 +14,13 @@ bot = telebot.TeleBot(token)
 # Here could be your ads
 
 @bot.message_handler(commands=['start'])
+@ignore_exceptions(bot)
 def start(message):
     bot.send_message(message.chat.id, "Привет, мальчики")
 
 
 @bot.message_handler(commands=['add_me'])
+@ignore_exceptions(bot)
 def new_member(message):
     if message.chat.id != main_chat_id:
         return
@@ -33,6 +36,7 @@ def new_member(message):
 
 
 @bot.message_handler(commands=['get_OCHOBA'])
+@ignore_exceptions(bot)
 def get_all(request):
     if request.chat.id != main_chat_id:
         return
@@ -44,6 +48,7 @@ def get_all(request):
 
 
 @bot.message_handler(content_types=['new_chat_member'])
+@ignore_exceptions(bot)
 def say_hello(message):
     if message.chat.id != main_chat_id:
         return
@@ -54,6 +59,7 @@ def say_hello(message):
 
 
 @bot.message_handler(content_types=['left_chat_member'])
+@ignore_exceptions(bot)
 def delete(message):
     if message.chat.id != main_chat_id:
         return
@@ -70,6 +76,7 @@ def delete(message):
 
 
 @bot.message_handler(commands=['ping'])
+@ignore_exceptions(bot)
 def ping(hostname):
     print("Chat name = " + hostname.chat.title)
     print("Chat id = " + str(hostname.chat.id))
@@ -82,6 +89,7 @@ def ping(hostname):
 
 
 @bot.message_handler(commands=['w'])
+@ignore_exceptions(bot)
 def get_weather(message):
     result = ''
     w = get_page("http://www.tatarmeteo.ru/")
@@ -101,6 +109,7 @@ def get_weather(message):
 
 
 @bot.message_handler(func=lambda message: check_if_reply(message))
+@ignore_exceptions(bot)
 def reply(message):
     bot.reply_to(message, "Нет, ты")
 
