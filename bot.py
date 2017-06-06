@@ -1,3 +1,7 @@
+
+import json
+import datetime
+import random
 from random import randrange
 
 import requests
@@ -103,6 +107,98 @@ def get_weather(message):
 @bot.message_handler(func=lambda message: check_if_reply(message))
 def reply(message):
     bot.reply_to(message, "Нет, ты")
+
+
+@bot.message_handler(commands=['pidoreg'])
+def pidoreg(message):
+    """
+    Регистрирует пользователя в списке пидоров.
+    Пидор локален для каждой конфы. Информация хранится по следующей
+    схеме:
+    {chat_id1:
+        {current: {date: YYYY-MM-DD, username: TommyFontaine},
+         stats: {username: count, username2: count, ...}},
+     chat_id2: ...}.
+    """
+    chat_id = str(message.chat.id)
+    username = message.from_user.username
+    if not username:
+        bot.reply_to(message, 'А у тебя юзернейма нет')
+        return
+
+    all_data = load_pidors()
+    if chat_id not in all_data:
+        all_data[chat_id] = {'current': {}, 'stats': {}}
+
+    if username in all_data[chat_id]['stats']:
+        bot.reply_to(message, 'Ты уже в игре')
+        return
+
+    all_data[chat_id]['stats'][username] = 0
+    dump_pidors(all_data)
+    bot.reply_to(message, 'Теперь ты в игре')
+
+
+@bot.message_handler(commands=['pidorstats'])
+def pidorstats(message):
+    """
+    Статистика по пидорам конфы.
+    """
+    chat_id = str(message.chat.id)
+    all_data = load_pidors()
+    if chat_id not in all_data:
+        bot.reply_to(message, 'В этой хате пидоров нет')
+        return
+
+    stats = all_data[chat_id]['stats']
+    rows = ['{} - {} раз(а)'.format(u, c) for u, c in stats.items()]
+    bot.reply_to(message, '\n'.join(rows))
+
+
+@bot.message_handler(commands=['pidor'])
+def pidor(message):
+    """
+    Розыгрыш пидора дня.
+    """
+    chat_id = str(message.chat.id)
+    all_data = load_pidors()
+    if chat_id not in all_data:
+        bot.reply_to(message, 'В этой хате пидоров нет')
+        return
+
+    today = datetime.date.today().isoformat()
+    current = all_data[chat_id]['current']
+    if current and current['date'] == today:
+        bot.reply_to(
+            message, 'Пидор дня - {}'.format(current['username']))
+        return
+
+    bot.reply_to(message, random.choice(search_for_pidor_replies))
+    time.sleep(3)  # интрига
+
+    candidates = all_data[chat_id]['stats']
+    winner = random.choice(list(candidates.keys()))
+    all_data[chat_id]['stats'][winner] += 1
+    all_data[chat_id]['current'] = {'date': today, 'username': winner}
+
+    # FIXME: Вот здесь могут быть проблемы, т.к. информация сериализуется
+    # целиком в один файл, при этом не лочится. Необходимо запилить
+    # мьютекс на всю эту функцию.
+    dump_pidors(all_data)
+
+    msg = random.choice(pidor_found_replies)
+    bot.reply_to(message, msg.format(winner))
+
+
+def load_pidors():
+    with open('pidors.json', 'r') as f:
+        data = json.load(f)
+    return data
+
+
+def dump_pidors(data):
+    with open('pidors.json', 'w') as f:
+        json.dump(data, f)
 
 
 def check_if_reply(message):
