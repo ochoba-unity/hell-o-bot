@@ -1,8 +1,10 @@
 
 import json
 import datetime
+import re
 import random
 from random import randrange
+from difflib import SequenceMatcher
 
 import requests
 from html.parser import HTMLParser
@@ -190,6 +192,20 @@ def pidor(message):
     bot.reply_to(message, msg.format(winner))
 
 
+@bot.message_handler(func=lambda m: True)
+def common_dialog(message):
+    """
+    Обработка любых сообщений в диалоге.
+    """
+    # Вырезаем все лишнее
+    normalized_message = try_normalize_message(message.text)
+    if normalized_message:
+        # Пробуем отвечать на приветствия.
+        reply = check_for_greetings(normalized_message)
+        if reply:
+            bot.reply_to(message, reply)
+
+
 def load_pidors():
     with open('pidors.json', 'r') as f:
         data = json.load(f)
@@ -207,6 +223,70 @@ def check_if_reply(message):
         if message.reply_to_message.from_user.username == bot_username[1:]:
             return True
     return False
+
+
+def try_normalize_message(text):
+    """
+    "Подчищает" текст сообщения, удаля из него всякий мусор.
+    """
+    if isinstance(text, str):
+        text = re.sub(r'[^\w\d ]', '', text)
+        text = re.sub(r'\s+', ' ', text)
+    return text.lower()
+
+
+def is_same_strings(a, b, diff):
+    """
+    Проверяет, похожи ли строки a и b.
+    Параметр diff - схожесть в долях (0.0-1.0).
+    """
+    return SequenceMatcher(None, a, b).ratio() >= diff
+
+
+def check_for_greetings(normalized_text):
+    """
+    Пробует задетектить во входящем сообщении приветствие.
+    В случае успеха, возвращает строку-ответ.
+    Отвечает один раз за определенное время.
+    """
+    yesterday = datetime.date.today() - datetime.timedelta(days=1)
+    if hasattr(check_for_greetings, 'roll_day'):
+        if check_for_greetings.roll_day > yesterday:
+            return
+
+    # На это мы реагируем:
+    greeting_patterns = (
+        'Доброе утро, Юлия Александровна',
+        'Добрый день, Юлия Александровна',
+        'Добрый вечер, Юлия Александровна',
+        'Здравствуйте, Юлия Александровна',
+        'Юлия Александровна, Доброе утро',
+        'Юлия Александровна, Добрый день',
+        'Юлия Александровна, Добрый вечер',
+        'Юлия Александровна, Здравствуйте',
+    )
+    # Этим мы отвечаем:
+    replies = (
+        'Здравствуйте',
+        'Добрый день',
+        'Ва алейкум ассалам ва рахматуллахи ва баракатух.',
+        'Привет.',
+        'Ну?',
+    )
+    # Этим мы отвечаем, если не уверены:
+    replies_not_sure = (
+        'Да пошел ты на хер, козел.',
+        'Пошел ты НА ХЕР, КОЗЕЛ!',
+    )
+
+    for pattern in greeting_patterns:
+        norm_pattern = try_normalize_message(pattern)
+        if is_same_strings(normalized_text, norm_pattern, 0.88):
+            check_for_greetings.roll_day = datetime.date.today()
+            return random.choice(replies)
+        elif is_same_strings(normalized_text, norm_pattern, 0.87):
+            check_for_greetings.roll_day = datetime.date.today()
+            return random.choice(replies_not_sure)
 
 
 class MyHTMLParser(HTMLParser):
