@@ -25,6 +25,14 @@ def getall(message):
     bot.reply_to(message, answer)
 
 
+@bot.message_handler(commands=['history'])
+def histoty(message):
+    ans = ""
+    for i in GayDates.select().order_by(GayDates.date):
+        ans += f"{i.date} {i.gay_name} \n"
+    bot.send_message(message.chat.id, f"Все пидоры за всё время\n + {ans}")
+
+
 @bot.message_handler(commands=["pidor"])
 def pidor(message):
     last_date = list(GayDates.select().order_by(-GayDates.date))[0]
