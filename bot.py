@@ -1,15 +1,6 @@
-from html.parser import HTMLParser
-
-import requests
-import telebot
 from cfg import *
 
 bot = telebot.TeleBot(TOKEN)
-db.connect()
-try:
-    db.create_table(Chatter)
-except:
-    pass
 
 
 @bot.message_handler(commands=['start'])
@@ -21,27 +12,48 @@ def welcome(message):
 def add(message):
     bot.send_message(message.chat.id, rules)
     for newbie in message.new_chat_members:
-        Chatter.create(username=newbie.username, gay=0)
+        Chatter.create(username=newbie.username, stat=0)
     bot.send_photo(message.chat.id, hello_image)
 
 
 @bot.message_handler(commands=['getall'])
 def getall(message):
     answer = ""
+    print("I got a message")
+    for user in Chatter.select().order_by(-Chatter.stat):
+        answer += "@" + str(user.username) + " был пидором " + str(user.stat) + " раз." + "\n"
+    bot.reply_to(message, answer)
+
+
+@bot.message_handler(commands=["pidor"])
+def pidor(message):
+    last_date = list(GayDates.select().order_by(-GayDates.date))[0]
+    if last_date.date == date.today():
+        bot.send_message(message.chat.id, f"Весь день сегодня Пидор дня - @{last_date.gay_name}.")
+    else:
+        everyone = Chatter.select()
+        new_pidor = randint(0, len(everyone) - 1)
+        GayDates.create(date=date.today(), gay_name=everyone[new_pidor].username)
+        bot.send_message(message.chat.id, f"Новый Пидор дня - @{everyone[new_pidor].username}")
+
+
+@bot.message_handler(commands=['all'])
+def all(message):
+    answer = ""
     for user in Chatter.select():
-        answer += "@" + str(user.username) + " был пидором" + str(user.gay) + " раз." + "\n"
+        answer += "@" + user.username + "\n"
     bot.reply_to(message, answer)
 
 
 @bot.message_handler(commands=['add_me'])
 def add_exist(message):
     try:
-        if not Chatter.get(Chatter.username == message.from_user.username):
-            Chatter.create(username=message.from_user.username, gay=0)
-            bot.reply_to(message, "Добавила")
-            return
+        if Chatter.get(Chatter.username == message.from_user.username):
+            pass
     except DoesNotExist:
-        pass
+        Chatter.create(username=message.from_user.username, stat=0)
+        bot.reply_to(message, "Добавила")
+        return
     bot.reply_to(message, "Ты уже есть")
 
 
@@ -93,3 +105,4 @@ def get_page(url):
 
 while True:
     bot.polling()
+    time.sleep(400)
