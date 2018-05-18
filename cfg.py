@@ -4,7 +4,7 @@ import time
 import requests
 import json
 
-TOKEN = ""
+TOKEN = "295118557:AAGM_Dqbm2NCH0El1zXYirAwcAY6BXypA3w"
 hello_image = open(file="faq.jpg", mode="rb")
 
 rules = "Huyavila \n \
