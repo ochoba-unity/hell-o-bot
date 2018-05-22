@@ -19,7 +19,15 @@ rules = "Huyavila \n \
 
 def check_users():
     try:
-        read_users()
+            def return_username(dct):
+            return Chatter(username=dct['username'], present=dct['present'])
+
+        read_from = open(file="users.json", mode="r")
+        sttt = ""
+        for i in read_from.readlines():
+            sttt += i.strip("\n")
+        return json.loads(sttt, object_hook=return_username)
+   
     except json.decoder.JSONDecodeError or FileNotFoundError:
         file = open(file="users.json", mode="w")
         print("[]", file=file)
