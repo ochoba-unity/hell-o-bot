@@ -55,9 +55,8 @@ def delete(message):
     for i in all_users:
         if i.username == message.left_chat_member.username:
             i.present = 0
-    chatter_list = open(file="users.json", mode="w")
-    json.dump(all_users, fp=chatter_list, cls=ChatterEncoder)
-    chatter_list.close()
+    dump(all_users)
+    bot.send_message(message.chat.id, "Удалила")
 
 
 @bot.message_handler(commands=['w'])
