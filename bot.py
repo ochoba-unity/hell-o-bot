@@ -32,9 +32,11 @@ def ping_all(message):
     for i in all_users:
         if i.present:
             answer += "@" + i.username + "\n"
-    bot.send_message(message.chat.id, answer)
-
-
+    if answer not None:
+        bot.send_message(message.chat.id, answer)
+    else:
+        bot.send_message(message.chat.id, "Никого нет!")
+    
 @bot.message_handler(commands=['add_me'])
 def add_me(message):
     all_users = read_users()
