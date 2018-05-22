@@ -5,7 +5,7 @@ import requests
 import json
 
 TOKEN = "295118557:AAGM_Dqbm2NCH0El1zXYirAwcAY6BXypA3w"
-hello_image = open(file="faq.jpg", mode="rb")
+hello_image = open(file="faq_image.jpg", mode="rb")
 
 rules = "Huyavila \n \
 Привет, роднуля, ты думаешь я тут от нехуй делать сижу? Проходи.\
