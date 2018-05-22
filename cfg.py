@@ -19,7 +19,7 @@ rules = "Huyavila \n \
 
 def check_users():
     try:
-            def return_username(dct):
+        def return_username(dct):
             return Chatter(username=dct['username'], present=dct['present'])
 
         read_from = open(file="users.json", mode="r")
