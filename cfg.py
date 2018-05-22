@@ -27,7 +27,7 @@ def check_users():
         for i in read_from.readlines():
             sttt += i.strip("\n")
         return json.loads(sttt, object_hook=return_username)
-   
+
     except json.decoder.JSONDecodeError or FileNotFoundError:
         file = open(file="users.json", mode="w")
         print("[]", file=file)
