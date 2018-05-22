@@ -14,12 +14,12 @@ def welcome(message):
 def add(message):
     all_users = read_users()
     for i in all_users:
-        if i.username == message.new_chat_members.username:
+        if i.username == message.new_chat_member.username:
             i.present = 1
             bot.send_message(message.chat.id, "Добро пожаловать. Снова")
             dump(all_users)
             return
-    all_users.append(Chatter(username=message.new_chat_members.username, present=1))
+    all_users.append(Chatter(username=message.new_chat_member.username, present=1))
     dump(all_users)
     bot.send_message(message.chat.id, rules)
     bot.send_photo(message.chat.id, hello_image)
