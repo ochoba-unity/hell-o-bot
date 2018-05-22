@@ -51,7 +51,7 @@ def add_me(message):
 def delete(message):
     all_users = read_users()
     for i in all_users:
-        if i.username == message.left_chat_members.username:
+        if i.username == message.left_chat_member.username:
             i.present = 0
     chatter_list = open(file="users.json", mode="w")
     json.dump(all_users, fp=chatter_list, cls=ChatterEncoder)
