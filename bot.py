@@ -10,7 +10,7 @@ def welcome(message):
 
 
 # Adds new guys
-@bot.message_handler(content_types=['new_chat_member'])
+@bot.message_handler(content_types=['new_chat_members'])
 def add(message):
     all_users = read_users()
     for i in all_users:
@@ -47,7 +47,7 @@ def add_me(message):
     bot.send_message(message.chat.id, "Добавила")
 
 
-@bot.message_handler(content_types=['left_chat_member'])
+@bot.message_handler(content_types=['left_chat_members'])
 def delete(message):
     all_users = read_users()
     for i in all_users:
