@@ -49,3 +49,27 @@ class Chatter:
 class ChatterEncoder(json.JSONEncoder):
     def default(self, o):
         return {"username": o.username, "present": o.present}
+
+
+
+class MyHTMLParser(HTMLParser):
+    def reset(self):
+        HTMLParser.reset(self)
+        self.data = ''
+
+    def handle_data(self, data):
+        self.data += data + ' '
+
+
+def get_page(url):
+    r = requests.get(url)
+    if r.status_code == 200:
+        page = r.text
+    return page
+
+
+def dump(user_list):
+    chatter_list = open(file="users.json", mode="w")
+    json.dump(user_list, fp=chatter_list, cls=ChatterEncoder)
+    chatter_list.close()
+
